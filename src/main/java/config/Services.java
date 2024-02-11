@@ -1,6 +1,8 @@
 package config;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Services {
 
@@ -8,7 +10,17 @@ public class Services {
 
     public static int getIntFromUser(String textToPrint) {
         System.out.println(textToPrint);
-        return in.nextInt();
+        int inputInt;
+        try {
+            inputInt = in.nextInt();
+            if (inputInt < 0) throw new IllegalArgumentException();
+        } catch (InputMismatchException | IllegalArgumentException e) {
+            System.err.println("\nNiepoprawne dane (" + e + ").\n");
+            inputInt = 0;
+        } finally {
+            in.nextLine();
+        }
+        return inputInt;
     }
 
     public static String getStringFromUser(String textToPrint) {
@@ -21,7 +33,7 @@ public class Services {
         return in.nextFloat();
     }
 
-    public static Scanner getIn () {
+    public static Scanner getIn() {
         return in;
     }
 

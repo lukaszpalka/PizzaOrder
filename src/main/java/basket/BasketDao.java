@@ -2,9 +2,11 @@ package basket;
 
 import config.ConnectionManager;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import lombok.AllArgsConstructor;
 import menu.Menu;
 import menu.MenuDao;
+
 import java.util.List;
 
 
@@ -18,8 +20,8 @@ public class BasketDao {
         return basket;
     }
 
-    public Basket findDishById(int idFromUser) {
-        EntityManager entityManager = ConnectionManager.getEntityManager();
+    public Basket findDishById(int idFromUser) throws NoResultException {
+        final EntityManager entityManager = ConnectionManager.getEntityManager();
         final Basket basket = (Basket) entityManager.createQuery("FROM Basket m WHERE m.id=:id")
                 .setParameter("id", idFromUser)
                 .getSingleResult();
@@ -27,7 +29,7 @@ public class BasketDao {
         return basket;
     }
 
-    public Basket findDishByName(String dishName) {
+    public Basket findDishByName(String dishName) throws NoResultException {
         EntityManager entityManager = ConnectionManager.getEntityManager();
         final Basket basket = (Basket) entityManager.createQuery("FROM Basket b WHERE b.dishName=:dish_name")
                 .setParameter("dish_name", dishName)
@@ -36,7 +38,7 @@ public class BasketDao {
         return basket;
     }
 
-    public void addById(int idFromUser, int quantity) {
+    public void addById(int idFromUser, int quantity) throws NoResultException {
         final MenuDao menuDao = new MenuDao();
         final Menu dishFromMenu = menuDao.findDishById(idFromUser);
         final Basket basket = new Basket(dishFromMenu.getDishName(), dishFromMenu.getPrice(), quantity, dishFromMenu.getPrice() * quantity);
@@ -63,7 +65,7 @@ public class BasketDao {
         entityManager.close();
     }
 
-    public void deleteAllById(int idFromUser) {
+    public void deleteAllById(int idFromUser) throws NoResultException {
         EntityManager entityManager = ConnectionManager.getEntityManager();
         entityManager.getTransaction().begin();
         entityManager.createQuery("DELETE FROM Basket d WHERE d.id=:id")
@@ -78,11 +80,13 @@ public class BasketDao {
         entityManager.getTransaction().begin();
         entityManager.createQuery("DELETE FROM Basket")
                 .executeUpdate();
+        entityManager.createNativeQuery("ALTER TABLE Basket AUTO_INCREMENT = 1")
+                .executeUpdate();
         entityManager.getTransaction().commit();
         entityManager.close();
     }
 
-    public void deletePartiallyById(int idFromUser, int quantity) {
+    public void deletePartiallyById(int idFromUser, int quantity) throws NoResultException {
         EntityManager entityManager = ConnectionManager.getEntityManager();
         entityManager.getTransaction().begin();
         entityManager.createQuery("UPDATE Basket d SET d.quantity=:quantity, d.finalPrice=:price WHERE d.id=:id")

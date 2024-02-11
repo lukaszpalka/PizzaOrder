@@ -24,9 +24,9 @@ public class PrintBasketDto extends BasketDto {
     public String toString() {
         return getId() +
                 ". " + dishName +
-                ",   " + quantity +
+                ", " + quantity +
                 " * " + price +
                 " = " + finalPrice +
-                " zł";
+                " zl";
     }
 }

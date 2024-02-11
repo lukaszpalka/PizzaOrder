@@ -23,7 +23,6 @@ public class PrintMenuDto extends MenuDto {
         return "Pozycja " + getId() +
                 ": pizza='" + dishName + '\'' +
                 ", składniki='" + dishDetails + '\'' +
-                ", cena=" + price +
-                '}';
+                ", cena=" + price;
     }
 }
